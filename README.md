@@ -41,4 +41,18 @@ func example() {
 
 ## Benchmarks
 
-TODO
+The benchmarks can be executed with `go test -bench .`.
+
+```bash
+Benchmark_Go_Sign-6                      52352     22548 ns/op       0 B/op       0 allocs/op
+Benchmark_Go_Verify-6                    25263     47206 ns/op       0 B/op       0 allocs/op
+Benchmark_Spacemesh_Sign-6               52512     22942 ns/op       0 B/op       0 allocs/op
+Benchmark_Spacemesh_Verify-6             25344     47545 ns/op       0 B/op       0 allocs/op
+Benchmark_Spacemesh_KeyExtraction-6      16887     69857 ns/op       0 B/op       0 allocs/op
+```
+
+## Testing
+
+Some of the tests require `python3` and the `pip` package `pure25519` to be installed. These
+tests fuzz the implemented functions and compare the results to the python reference
+implementation in `internal/pure25519`.
