@@ -1,0 +1,49 @@
+name: Upgrade Go internal package
+on:
+  workflow_dispatch:
+    inputs:
+      go_version:
+        description: "Go version to upgrade to"
+        required: true
+        default: "1.20.1"
+      checksum:
+        description: "SHA256 checksum of the Go tarball"
+        required: true
+        default: "b5c1a3af52c385a6d1c76aed5361cf26459023980d0320de7658bae3915831a2"
+
+jobs:
+  update-go-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Clear internal/edwards25519 directory
+        run: rm -rf internal/edwards25519
+      - name: Download Go
+        run: wget https://go.dev/dl/go${{ github.event.inputs.go_version }}.src.tar.gz -O /tmp/go${{ github.event.inputs.go_version }}.src.tar.gz
+      - name: Verify checksum
+        run: |
+          cd /tmp
+          echo "${{ github.event.inputs.checksum }} go${{ github.event.inputs.go_version }}.src.tar.gz" | sha256sum --check
+      - name: Extract Go
+        run: tar --strip-components=3 -xzf /tmp/go${{ github.event.inputs.go_version }}.src.tar.gz go/src/crypto/internal/edwards25519
+      - name: Skip if diff is empty
+        id: skip
+        run: |
+          if [[ -z $(git diff --exit-code) ]]; then
+            echo "::set-output name=skip::true"
+          fi
+      - name: Create pull request
+        if: steps.skip.outputs.skip != 'true'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Upgrade Go internal package to Go ${{ github.event.inputs.go_version }}
+          title: Upgrade Go internal package to Go ${{ github.event.inputs.go_version }}
+          body: |
+            This PR upgrades the Go internal package to Go ${{ github.event.inputs.go_version }}.
+          branch: upgrade-go-${{ github.event.inputs.go_version }}
+          labels: |
+            go
+            internal
+          reviewers: |
+            @spacemeshos/core-dev-team
