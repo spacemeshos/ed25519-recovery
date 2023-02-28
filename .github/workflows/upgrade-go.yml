@@ -27,6 +27,8 @@ jobs:
           echo "${{ github.event.inputs.checksum }} go${{ github.event.inputs.go_version }}.src.tar.gz" | sha256sum --check
       - name: Extract Go
         run: tar --strip-components=3 -xzf /tmp/go${{ github.event.inputs.go_version }}.src.tar.gz go/src/crypto/internal/edwards25519
+      - name: Update imports
+        run: find . -type f -name '*.go' -exec sed -i -e 's,crypto/internal/edwards25519,github.com/spacemeshos/ed25519-recovery/internal/edwards25519,g' {} \;
       - name: Skip if diff is empty
         id: skip
         run: |
