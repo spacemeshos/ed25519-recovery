@@ -46,4 +46,4 @@ jobs:
             go
             internal
           reviewers: |
-            @spacemeshos/core-dev-team
+            spacemeshos/core-dev-team
