@@ -1,0 +1,41 @@
+name: CI
+
+env:
+  go-version: "1.19"
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: set up go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.go-version }}
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip" # caching pip dependencies
+
+      - name: build
+        run: go build -v ./...
+
+      - name: go test
+        run: go test -v ./...
+
+      - name: go fuzz
+        # Go fuzz only works on individual tests, cannot run multiple tests with a single command.
+        run: |
+          go test -fuzz=Fuzz_ExtractPublicKey -fuzztime=20s
+          go test -fuzz=Fuzz_Sign -fuzztime=20s
+          go test -fuzz=Fuzz_Derive -fuzztime=20s

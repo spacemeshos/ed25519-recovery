@@ -56,3 +56,11 @@ Benchmark_Spacemesh_KeyExtraction-6      16887     69857 ns/op       0 B/op     
 Some of the tests require `python3` and the `pip` package `pure25519` to be installed. These
 tests fuzz the implemented functions and compare the results to the python reference
 implementation in `internal/pure25519`.
+
+To run the tests, execute `go test ./... -v`. There are also fuzzing tests that can be run with
+
+```bash
+go test -fuzz=Fuzz_ExtractPublicKey -fuzztime=20s
+go test -fuzz=Fuzz_Sign -fuzztime=20s
+go test -fuzz=Fuzz_Derive -fuzztime=20s
+```
