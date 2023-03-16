@@ -79,7 +79,7 @@ func ExtractPublicKey(message, sig []byte) (PublicKey, error) {
 }
 
 func extractPublicKey(publicKey, message, sig []byte) error {
-	if l := len(sig); l != SignatureSize || sig[63]&224 != 0 {
+	if len(sig) != SignatureSize || sig[63]&224 != 0 {
 		return errors.New("ed25519: bad signature format")
 	}
 
