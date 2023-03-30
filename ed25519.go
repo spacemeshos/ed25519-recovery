@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"crypto/ed25519"
 	"crypto/sha512"
-	"encoding/binary"
 	"errors"
 	"io"
 	"strconv"
