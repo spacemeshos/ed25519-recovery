@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"crypto/ed25519"
 	"crypto/sha512"
-	"encoding/binary"
 	"errors"
 	"io"
 	"strconv"
@@ -45,23 +44,6 @@ func GenerateKey(rand io.Reader) (PublicKey, PrivateKey, error) {
 // package.
 func NewKeyFromSeed(seed []byte) PrivateKey {
 	return ed25519.NewKeyFromSeed(seed)
-}
-
-// NewDerivedKeyFromSeed calculates a private key from a 32 bytes random seed,
-// an integer index and salt.
-func NewDerivedKeyFromSeed(seed []byte, index uint64, salt []byte) PrivateKey {
-	if l := len(seed); l != SeedSize {
-		panic("ed25519: bad seed length: " + strconv.Itoa(l))
-	}
-
-	digest := sha512.New()
-	digest.Write(seed)
-	digest.Write(salt)
-	buf := make([]byte, 8)
-	binary.LittleEndian.PutUint64(buf, index)
-	digest.Write(buf)
-
-	return NewKeyFromSeed(digest.Sum(nil)[:SeedSize])
 }
 
 // ExtractPublicKey extracts the signer's public key given a message and its

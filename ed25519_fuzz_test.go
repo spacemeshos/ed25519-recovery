@@ -60,28 +60,3 @@ func Fuzz_Sign(f *testing.F) {
 		require.EqualValues(t, key.Public(), pub)
 	})
 }
-
-func Fuzz_Derive(f *testing.F) {
-	py, err := pure25519.New()
-	if err != nil {
-		f.Skip("failed to initialize python bindings")
-	}
-
-	f.Add(int64(0), []byte("Spacemesh rocks"), uint64(5))
-	f.Fuzz(func(t *testing.T, rndSeed int64, salt []byte, index uint64) {
-		src := rand.New(rand.NewSource(rndSeed))
-		seed := make([]byte, 32)
-
-		// generate random seed
-		_, err := src.Read(seed)
-		require.NoError(t, err, "failed to read random seed")
-
-		// derive key from seed
-		goKey := NewDerivedKeyFromSeed(seed, index, salt)
-		pyKey, err := py.Derive(seed, salt, index)
-		require.NoError(t, err)
-
-		// compare keys
-		require.EqualValues(t, pyKey, goKey.Seed())
-	})
-}
