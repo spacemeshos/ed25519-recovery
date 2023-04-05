@@ -39,7 +39,7 @@ jobs:
           fi
       - name: Create pull request
         if: steps.skip.outputs.skip != 'true'
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Upgrade Go internal package to Go ${{ github.event.inputs.go_version }}
           title: Upgrade Go internal package to Go ${{ github.event.inputs.go_version }}
