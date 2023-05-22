@@ -1,3 +1,5 @@
+# This library has been deprecated and is no longer used nor maintained. Please use a standard ed25519 library instead.
+
 # ed25519-recovery
 
 Package ed25519-recovery implements a modified Ed25519 signature algorithm that allows for public key recovery.
